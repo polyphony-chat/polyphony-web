@@ -16,7 +16,7 @@
 <h3 align="center">Polyphony Web</h3>
 
   <p align="center">
-    A multi-instance, cross-platform Discord/Spacebar API-compatible chat client, written in Rust and Yew.
+    A multi-instance, cross-platform Discord/Spacebar API-compatible chat client, written in Rust using Yew and optionally Tauri.
     <br />
     <a href="https://github.com/polyphony-chat/polyphony-web"><strong>Explore the docs »</strong></a>
     <br />
@@ -30,6 +30,19 @@
 </div>
 
 </div>
+
+## Setting up a dev environment
+
+Install `tauri-cli` and `trunk`
+```sh
+cargo install tauri-cli trunk --locked
+```
+
+To start the web-based application, change into the `crates/polyphony-wasm` directory and run `trunk serve`.
+
+To start the Tauri powered Desktop-App instead, change into the `crates/polyphony-tauri` directory and run `cargo tauri dev`. 
+
+> Note that the Tauri Dev Server will try to run and listen for the `trunk serve` Dev server. If it fails to do so (perhaps because Port `8080` is already occupied), it will not be able to start the Tauri App.
 
 [Rust]: https://img.shields.io/badge/Rust-orange?style=plastic&logo=rust
 [Rust-url]: https://www.rust-lang.org/
