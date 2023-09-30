@@ -33,6 +33,12 @@
 
 ## Setting up a dev environment
 
+Add wasm as a compilation target
+
+```
+rustup target add wasm32-unknown-unknown
+```
+
 Install `tauri-cli` and `trunk`
 ```sh
 cargo install tauri-cli trunk --locked
