@@ -8,7 +8,7 @@ fn main() {
 pub fn App() -> Html {
     html! {
         <div>
-            <h2 class={"heading"}>{"Hello, World!"}</h2>
+            <h2 class={"text-3xl font-bold underline"}>{"Hello, World!"}</h2>
         </div>
     }
 }
