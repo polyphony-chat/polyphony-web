@@ -5,6 +5,9 @@ pub mod login;
 pub use crash::CrashScreen;
 pub use dashboard::DashboardScreen;
 pub use login::LoginScreen;
+use yew::{Context, Html};
+
+use crate::Client;
 
 #[derive(Debug)]
 pub enum Screen {

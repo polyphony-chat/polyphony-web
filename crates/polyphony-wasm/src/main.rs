@@ -14,16 +14,7 @@ use yew::prelude::*;
 /// <-- Yew boilerplate -->
 
 fn main() {
-    yew::Renderer::<App>::new().render();
-}
-
-#[function_component]
-pub fn App() -> Html {
-    html! {
-        <div>
-            <h2 class={"text-3xl font-bold underline"}>{"Hello, World!"}</h2>
-        </div>
-    }
+    yew::Renderer::<Client>::new().render();
 }
 
 /// <-- Data Structures -->
@@ -63,12 +54,16 @@ impl Component for Client {
 
     type Properties = ();
 
-    fn create(ctx: &Context<Self>) -> Self {
+    fn create(_ctx: &Context<Self>) -> Self {
         Self::default()
     }
 
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        todo!()
+    fn view(&self, _ctx: &Context<Self>) -> Html {
+        match &self.screen {
+            Screen::Login(login) => login.view(),
+            Screen::Dashboard(dashboard) => dashboard.view(),
+            Screen::Crash(crash) => crash.view(),
+        }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
