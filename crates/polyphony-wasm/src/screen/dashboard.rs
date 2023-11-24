@@ -4,7 +4,8 @@ use chorus::instance::ChorusUser;
 use chorus::types::Guild;
 use yew::Html;
 
-use crate::{Data, GlobalIdentifier};
+use crate::client::Data;
+use crate::GlobalIdentifier;
 
 #[derive(Debug, Default, Clone)]
 pub struct DashboardScreen {
