@@ -1,8 +1,8 @@
-use crate::message::Message;
+use crate::message::{self, Message};
 use crate::screen::{self, Screen};
 use crate::GlobalIdentifier;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, RwLock};
 
 use chorus::instance::{ChorusUser, Instance};
@@ -33,6 +33,7 @@ impl Data {
 #[derive(Debug, Default)]
 pub struct Client {
     pub data: Arc<RwLock<Data>>,
+    pub screens: HashSet<Screen>,
     pub screen: Screen,
 }
 
@@ -45,15 +46,26 @@ impl Component for Client {
         Self::default()
     }
 
-    fn view(&self, _ctx: &Context<Self>) -> Html {
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        println!("Hello, world!");
+        eprintln!("aaa");
         match &self.screen {
-            Screen::Login(login) => login.view(self.data.clone()),
+            Screen::Login(login) => login.view(self.data.clone(), ctx),
             Screen::Dashboard(dashboard) => dashboard.view(),
             Screen::Crash(crash) => crash.view(),
         }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        todo!()
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        match msg {
+            Message::Login(message) => {
+                let Screen::Login(_) = &mut self.screen else {
+                    return false;
+                };
+                message::LoginMessage::update(self, message)
+            }
+            Message::Dashboard(_) => todo!(),
+            Message::Crash(_) => todo!(),
+        }
     }
 }

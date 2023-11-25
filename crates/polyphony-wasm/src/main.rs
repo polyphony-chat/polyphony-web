@@ -21,6 +21,7 @@ fn main() {
 
 #[function_component]
 fn App() -> Html {
+    env_logger::init();
     html! {
         <>
             <Client />

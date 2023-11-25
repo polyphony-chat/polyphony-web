@@ -15,6 +15,6 @@ pub enum Screen {
 
 impl Default for Screen {
     fn default() -> Self {
-        Self::Login(LoginScreen)
+        Self::Login(LoginScreen::default())
     }
 }
