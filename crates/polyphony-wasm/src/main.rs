@@ -1,33 +1,12 @@
-mod client;
-mod infobar;
-mod message;
-mod screen;
+mod app;
 
 use chorus::types::Snowflake;
 use chorus::UrlBundle;
 
-use yew::prelude::*;
-
-use crate::client::Client;
-use crate::infobar::Infobar;
-
-/// <-- Yew boilerplate -->
+use app::App;
 
 fn main() {
     yew::Renderer::<App>::new().render();
-}
-
-/// <-- Data Structures -->
-
-#[function_component]
-fn App() -> Html {
-    env_logger::init();
-    html! {
-        <>
-            <Client />
-            <Infobar />
-        </>
-    }
 }
 
 /// Tuple of a [`UrlBundle`] and a [`Snowflake`], where the [`Snowflake`] is the ID of the User and
