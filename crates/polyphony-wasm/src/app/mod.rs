@@ -54,7 +54,6 @@ pub struct State {
 }
 
 #[derive(PartialEq, Store, Default)]
-#[store(storage = "local", storage_tab_sync)]
 pub struct TabSyncedState {
     client_settings: ClientSettings,
     users: HashMap<GlobalIdentifier, AccountWrapper>,
