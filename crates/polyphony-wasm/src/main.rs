@@ -1,4 +1,5 @@
 mod app;
+mod stores;
 
 use chorus::types::Snowflake;
 use chorus::UrlBundle;

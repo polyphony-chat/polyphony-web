@@ -1,58 +1,57 @@
+use std::rc::Rc;
+
+use crate::stores::AuthenticationStore;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[derive(Store, PartialEq, Clone, Default)]
-struct RegisterProps {
-    username: String,
-    password: String,
-    email: String,
+#[derive(Default)]
+pub(crate) struct RegisterPage {
+    state: Rc<AuthenticationStore>,
+    dispatch: Dispatch<AuthenticationStore>,
+
+    url_api: Option<AttrValue>,
+    url_wss: Option<AttrValue>,
+    url_cdn: Option<AttrValue>,
+    url_base: Option<AttrValue>,
+
+    email: AttrValue,
+    password: AttrValue,
     consent: bool,
-    age: bool,
+    of_age: bool,
 }
 
-#[function_component(Register)]
-pub fn register() -> Html {
-    let (props, dispatch) = use_store::<RegisterProps>();
-    let onchange_username = {
-        let dispatch_clone = dispatch.clone();
-        move |value: Event| {
-            dispatch_clone.reduce_mut(|state| {
-                state.username = value.target_unchecked_into::<HtmlInputElement>().value()
-            })
+pub(crate) enum RegisterPageMsg {
+    AttemptRegister,
+    SetError(String),
+    ToggleConsent,
+    ToggleAgeConfirm,
+    UpdateAuth(Rc<AuthenticationStore>),
+    UpdateUrlApi(AttrValue),
+    UpdateUrlCdn(AttrValue),
+    UpdateUrlWss(AttrValue),
+    UpdateUrlBase(AttrValue),
+    UpdatePassword(AttrValue),
+    UpdateEmail(AttrValue),
+}
+
+impl Component for RegisterPage {
+    type Message = RegisterPageMsg;
+
+    type Properties = ();
+
+    fn create(ctx: &Context<Self>) -> Self {
+        let callback = ctx.link().callback(RegisterPageMsg::UpdateAuth);
+        let dispatch = Dispatch::<AuthenticationStore>::subscribe(callback);
+
+        Self {
+            state: dispatch.get(),
+            dispatch,
+            ..Default::default()
         }
-    };
-    let onchange_password = {
-        let dispatch_clone = dispatch.clone();
-        move |value: Event| {
-            dispatch_clone.reduce_mut(|state| {
-                state.password = value.target_unchecked_into::<HtmlInputElement>().value()
-            })
-        }
-    };
-    let onchange_email = {
-        let dispatch_clone = dispatch.clone();
-        move |value: Event| {
-            dispatch_clone.reduce_mut(|state| {
-                state.email = value.target_unchecked_into::<HtmlInputElement>().value()
-            })
-        }
-    };
-    html! {
-        <form class="register">
-            <h1>{"Register"}</h1>
-            <label for ="username">{"Username"}</label>
-            <input type="text" id="username" required=true onchange={onchange_username} />
-            <label for ="password">{"Password"}</label>
-            <input type="password" id="password" required=true onchange={onchange_password}/>
-            <label for ="email">{"Email"}</label>
-            <input type="email" id="email" onchange={onchange_email}/>
-            <label for="consent">{"I agree to the terms of service."}</label>
-            <input type="checkbox" id="consent" required=true/>
-            <label for="age">{"I am at least 16 years old."} </label>
-            <input type="checkbox" id="age" required=true/>
-            <input type="submit" value="Sign Up" required=true/>
-            <p>{props.age}</p>
-        </form>
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        todo!()
     }
 }
