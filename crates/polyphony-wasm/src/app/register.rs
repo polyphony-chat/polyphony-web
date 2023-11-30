@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
 use crate::stores::AuthenticationStore;
-use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -48,6 +47,49 @@ impl Component for RegisterPage {
             state: dispatch.get(),
             dispatch,
             ..Default::default()
+        }
+    }
+
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        match msg {
+            RegisterPageMsg::AttemptRegister => todo!(),
+            RegisterPageMsg::SetError(_) => todo!(),
+            RegisterPageMsg::ToggleConsent => {
+                self.consent = !self.consent;
+                false
+            }
+            RegisterPageMsg::ToggleAgeConfirm => {
+                self.of_age = !self.of_age;
+                false
+            }
+            RegisterPageMsg::UpdateAuth(data) => {
+                self.state = data;
+                false
+            }
+            RegisterPageMsg::UpdateUrlApi(data) => {
+                self.url_api = Some(data);
+                false
+            }
+            RegisterPageMsg::UpdateUrlCdn(data) => {
+                self.url_cdn = Some(data);
+                false
+            }
+            RegisterPageMsg::UpdateUrlWss(data) => {
+                self.url_wss = Some(data);
+                false
+            }
+            RegisterPageMsg::UpdateUrlBase(data) => {
+                self.url_base = Some(data);
+                false
+            }
+            RegisterPageMsg::UpdatePassword(data) => {
+                self.password = data;
+                false
+            }
+            RegisterPageMsg::UpdateEmail(data) => {
+                self.email = data;
+                false
+            }
         }
     }
 
