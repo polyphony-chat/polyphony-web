@@ -14,7 +14,6 @@ use crate::GlobalIdentifier;
 use self::dashboard::Dashboard;
 use self::info::Info;
 use self::login::Login;
-use self::register::Register;
 
 #[function_component]
 pub fn App() -> Html {
