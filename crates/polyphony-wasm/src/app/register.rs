@@ -1,6 +1,9 @@
+use std::borrow::BorrowMut;
 use std::rc::Rc;
 
 use crate::stores::AuthenticationStore;
+use chorus::instance::Instance;
+use chorus::UrlBundle;
 use yew::prelude::*;
 use yew_router::scope_ext::RouterScopeExt;
 use yewdux::prelude::*;
@@ -35,6 +38,12 @@ pub(crate) enum RegisterPageMsg {
     UpdateEmail(AttrValue),
 }
 
+impl RegisterPage {
+    fn individual_urls_set(&self) -> bool {
+        self.url_api.is_some() && self.url_wss.is_some() && self.url_cdn.is_some()
+    }
+}
+
 impl Component for RegisterPage {
     type Message = RegisterPageMsg;
 
@@ -54,10 +63,21 @@ impl Component for RegisterPage {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             RegisterPageMsg::AttemptRegister => {
+                // TODO: Check consent and of_age before proceeding with registration.
+
                 let dispatch = self.dispatch.clone();
                 let set_error_callback = ctx.link().callback(RegisterPageMsg::SetError);
                 let navigator = ctx.link().navigator().unwrap();
-                wasm_bindgen_futures::spawn_local(async move { todo!() });
+                let url_bundle = match self.individual_urls_set() {
+                    true => UrlBundle::new(
+                        self.url_api.as_ref().unwrap().to_string(),
+                        self.url_wss.as_ref().unwrap().to_string(),
+                        self.url_wss.as_ref().unwrap().to_string(),
+                    ),
+                    false => todo!(), // TODO: Get URLs from .well-known,
+                };
+
+                wasm_bindgen_futures::spawn_local(async move {});
                 true
             }
             RegisterPageMsg::SetError(_) => todo!(),
