@@ -1,5 +1,6 @@
 use chorus::instance::{ChorusUser, Instance};
 use chorus::UrlBundle;
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 use yewdux::prelude::*;
 
@@ -7,7 +8,7 @@ use crate::GlobalIdentifier;
 
 #[derive(Store, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
 pub(crate) struct AuthenticationStore {
-    pub(crate) instances: Vec<(UrlBundle, Instance)>,
+    pub(crate) instances: HashMap<UrlBundle, Instance>,
     /// Tuple (GlobalIdentifier, Token)
     pub(crate) identities: Vec<(GlobalIdentifier, String)>,
 }
