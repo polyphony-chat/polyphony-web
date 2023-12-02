@@ -14,6 +14,7 @@ use crate::GlobalIdentifier;
 use self::dashboard::Dashboard;
 use self::info::Info;
 use self::login::Login;
+use self::register::RegisterPage;
 
 #[function_component]
 pub fn App() -> Html {
@@ -74,7 +75,7 @@ fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! { <Info /> },
         Route::Login => html! { <Login /> },
-        Route::Register => html! { <Register /> },
+        Route::Register => html! { <RegisterPage /> },
         Route::Dashboard => html! { <Dashboard /> },
     }
 }
