@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use crate::stores::AuthenticationStore;
 use yew::prelude::*;
+use yew_router::scope_ext::RouterScopeExt;
 use yewdux::prelude::*;
 
 #[derive(Default)]
@@ -52,7 +53,13 @@ impl Component for RegisterPage {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            RegisterPageMsg::AttemptRegister => todo!(),
+            RegisterPageMsg::AttemptRegister => {
+                let dispatch = self.dispatch.clone();
+                let set_error_callback = ctx.link().callback(RegisterPageMsg::SetError);
+                let navigator = ctx.link().navigator().unwrap();
+                wasm_bindgen_futures::spawn_local(async move { todo!() });
+                true
+            }
             RegisterPageMsg::SetError(_) => todo!(),
             RegisterPageMsg::ToggleConsent => {
                 self.consent = !self.consent;
