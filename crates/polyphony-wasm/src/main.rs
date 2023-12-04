@@ -1,10 +1,20 @@
 use chorus::types::Snowflake;
 use chorus::UrlBundle;
+use dioxus::prelude::*;
 
 fn main() {
-    println!("Hi");
+    dioxus_web::launch(App);
 }
 
 /// Tuple of a [`UrlBundle`] and a [`Snowflake`], where the [`Snowflake`] is the ID of the User and
 /// the [`UrlBundle`] are the URLs of the Instance.
 pub type GlobalIdentifier = (UrlBundle, Snowflake);
+
+#[allow(non_snake_case)]
+fn App(cx: Scope) -> Element {
+    cx.render(rsx! {
+        div {
+            "Hello, world!"
+        }
+    })
+}
