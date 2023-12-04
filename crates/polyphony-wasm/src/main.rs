@@ -1,13 +1,8 @@
-mod app;
-mod stores;
-
 use chorus::types::Snowflake;
 use chorus::UrlBundle;
 
-use app::App;
-
 fn main() {
-    yew::Renderer::<App>::new().render();
+    println!("Hi");
 }
 
 /// Tuple of a [`UrlBundle`] and a [`Snowflake`], where the [`Snowflake`] is the ID of the User and
