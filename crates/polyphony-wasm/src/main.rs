@@ -11,18 +11,18 @@ fn App() -> impl IntoView {
     let (count, set_count) = create_signal(0);
 
     view! {
+        <Register/>
         <button on:click=move |_| {
             set_count.set(count.get() + 1);
         }>
         "Click me counter: "
         {move || count.get()}
         </button>
-
-        <Register/>
     }
 }
 
 fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
     leptos::mount_to_body(|| view! { <App/>})
 }
 
