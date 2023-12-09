@@ -18,7 +18,7 @@ pub type GlobalIdentifier = (UrlBundle, Snowflake);
 #[derive(Routable, Clone)]
 enum Route {
     #[route("/register")]
-    Register {},
+    Register { url_api: &'static str },
 }
 
 #[allow(non_snake_case)]
