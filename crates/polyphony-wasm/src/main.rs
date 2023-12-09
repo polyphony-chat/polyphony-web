@@ -4,6 +4,8 @@ use chorus::types::Snowflake;
 use chorus::UrlBundle;
 use leptos::*;
 
+use crate::app::Register;
+
 #[component]
 fn App() -> impl IntoView {
     let (count, set_count) = create_signal(0);
@@ -16,6 +18,7 @@ fn App() -> impl IntoView {
         {move || count.get()}
         </button>
 
+        <Register/>
     }
 }
 
