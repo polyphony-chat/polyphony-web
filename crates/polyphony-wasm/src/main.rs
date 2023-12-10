@@ -1,4 +1,5 @@
 mod app;
+mod stores;
 
 use chorus::types::Snowflake;
 use chorus::UrlBundle;
@@ -6,16 +7,15 @@ use leptos::*;
 use log::*;
 
 use crate::app::Register;
+use crate::stores::{AuthenticationStore, UserStore};
 
 #[component]
 fn App() -> impl IntoView {
-    let (count, set_count) = create_signal(0);
-
+    provide_context(AuthenticationStore::default());
+    provide_context(UserStore::default());
+    debug!("Rendering the App view");
     view! {
         <Register/>
-        <button on:click=move |_| {
-            set_count.set(count.get() + 1);
-        }>"Click me counter: " {move || count.get()}</button>
     }
 }
 
