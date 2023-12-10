@@ -4,11 +4,22 @@ use chorus::types::RegisterSchema;
 use leptos::*;
 use log::*;
 
+use crate::stores::AuthenticationStore;
+
 #[component]
 pub fn Register() -> impl IntoView {
     let (mail, set_mail) = create_signal(String::new());
     let (pass, set_pass) = create_signal(String::new());
     let (url, set_url) = create_signal(String::new());
+
+    let instance_state = expect_context::<RwSignal<AuthenticationStore>>();
+    let (instance, set_instance) = create_slice(
+        instance_state,
+        |state: &AuthenticationStore| state.instances.clone(), //TODO Is this ok?
+        |state, (k, v)| {
+            state.instances.insert(k, v);
+        },
+    );
 
     let submit = create_action(|input: &(String, String, String)| {
         let input = input.to_owned();
@@ -47,6 +58,6 @@ async fn send_register(input: &(String, String, String)) -> ChorusResult<Instanc
         ..Default::default()
     };
     let instance = Instance::from_root_url(&input.0).await;
-    debug!("Got instance: {:?}", instance.clone().unwrap());
+    trace!("Got instance: {:?}", instance.clone().unwrap());
     instance
 }
