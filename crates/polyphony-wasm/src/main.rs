@@ -15,10 +15,7 @@ fn App() -> impl IntoView {
         <Register/>
         <button on:click=move |_| {
             set_count.set(count.get() + 1);
-        }>
-        "Click me counter: "
-        {move || count.get()}
-        </button>
+        }>"Click me counter: " {move || count.get()}</button>
     }
 }
 
@@ -26,7 +23,7 @@ fn main() {
     wasm_logger::init(wasm_logger::Config::default());
     debug!("wasm_logger initialized!");
     debug!("Starting App...");
-    leptos::mount_to_body(|| view! { <App/>})
+    leptos::mount_to_body(|| view! { <App/> })
 }
 
 /// Tuple of a [`UrlBundle`] and a [`Snowflake`], where the [`Snowflake`] is the ID of the User and

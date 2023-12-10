@@ -21,12 +21,15 @@ pub fn Register() -> impl IntoView {
             let input = (url.get().to_string(), pass.get().to_string(), mail.get().to_string());
             submit.dispatch(input);
         }>
+            <label for="mail">Email:</label>
             <input class="border-2 border-black text-black" type="email" id="mail" name="email" on:input=move |ev| {
                 set_mail.set(event_target_value(&ev));
             } prop:value=mail/><br/>
+            <label for="pass">Password:</label>
             <input class="border-2 border-black text-black" type="password" id="pass" name="pass" on:input=move |ev| {
                 set_pass.set(event_target_value(&ev));
             } prop:value=pass/><br/>
+            <label for="iurl">Instance URL:</label>
             <input class="border-2 border-black text-black" type="text" id="iurl" name="iurl" on:input=move |ev| {
                 set_url.set(event_target_value(&ev));
             } prop:value=url/><br/>
