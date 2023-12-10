@@ -3,6 +3,7 @@ mod app;
 use chorus::types::Snowflake;
 use chorus::UrlBundle;
 use leptos::*;
+use log::*;
 
 use crate::app::Register;
 
@@ -23,6 +24,8 @@ fn App() -> impl IntoView {
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
+    debug!("wasm_logger initialized!");
+    debug!("Starting App...");
     leptos::mount_to_body(|| view! { <App/>})
 }
 
