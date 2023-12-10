@@ -35,12 +35,12 @@
 
 Add wasm as a compilation target
 
-```
+```bash
 rustup target add wasm32-unknown-unknown
 ```
 
 Install `tauri-cli` and `trunk`
-```sh
+```bash
 cargo install tauri-cli trunk --locked
 ```
 
