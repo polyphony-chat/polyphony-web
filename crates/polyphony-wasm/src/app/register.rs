@@ -1,3 +1,4 @@
+use chorus::errors::ChorusResult;
 use chorus::instance::Instance;
 use chorus::types::RegisterSchema;
 use leptos::*;
@@ -8,18 +9,17 @@ pub fn Register() -> impl IntoView {
     let (mail, set_mail) = create_signal(String::new());
     let (pass, set_pass) = create_signal(String::new());
     let (url, set_url) = create_signal(String::new());
-    let once =
-        create_resource(
-            || (),
-            async move |_| {
-                send_register(
-                    url.get().to_string(),
-                    pass.get().to_string(),
-                    mail.get().to_string(),
-                )
-                .await
-            },
-        );
+    let input = (
+        url.get().to_owned().to_string(),
+        pass.get().to_owned().to_string(),
+        mail.get().to_owned().to_string(),
+    );
+
+    let submit = create_action(|input: &(String, String, String)| {
+        let input = input.to_owned();
+        async move { send_register(&input).await }
+    });
+
     view! {
         <form>
             <input class="border-2 border-black text-black" type="email" id="mail" name="email" on:input=move |ev| {
@@ -36,14 +36,13 @@ pub fn Register() -> impl IntoView {
     }
 }
 
-async fn send_register(url: String, pass: String, mail: String) {
+async fn send_register(input: &(String, String, String)) -> ChorusResult<Instance> {
     let reg = RegisterSchema {
-        username: mail.clone(),
-        password: Some(pass),
+        username: input.2.clone(),
+        password: Some(input.1.clone()),
         consent: true,
-        email: Some(mail),
+        email: Some(input.2.clone()),
         ..Default::default()
     };
-    let instance = Instance::from_root_url(&url).await.unwrap();
-    debug!("{:?}", instance);
+    Instance::from_root_url(&input.0).await
 }
