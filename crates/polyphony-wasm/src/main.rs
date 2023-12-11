@@ -7,13 +7,12 @@ use leptos::*;
 use log::*;
 
 use crate::app::Register;
-use crate::stores::{InstanceStore, UserStore};
+use crate::stores::ChorusStore;
 
 #[component]
 fn App() -> impl IntoView {
-    let instance_store = InstanceStore::default();
+    let instance_store = ChorusStore::default();
     provide_context(instance_store.instances);
-    provide_context(create_signal(UserStore::default()));
     debug!("Rendering the App view");
     view! {
         <Register/>

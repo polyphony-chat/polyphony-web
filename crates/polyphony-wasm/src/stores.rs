@@ -6,11 +6,7 @@ use leptos::RwSignal;
 use crate::GlobalIdentifier;
 
 #[derive(Clone, Debug, Default)]
-pub(crate) struct InstanceStore {
+pub(crate) struct ChorusStore {
     pub(crate) instances: RwSignal<HashMap<UrlBundle, Instance>>,
-}
-
-#[derive(Clone, Debug, Default)]
-pub(crate) struct UserStore {
-    pub(crate) users: HashMap<GlobalIdentifier, ChorusUser>,
+    pub(crate) users: RwSignal<HashMap<GlobalIdentifier, ChorusUser>>,
 }
