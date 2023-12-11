@@ -3,17 +3,6 @@ name = "polyphony-wasm"
 version = "0.1.0"
 edition = "2021"
 
-[profile.release]
-inherits = "release"
-opt-level = 'z'
-lto = true
-codegen-units = 1
-panic = "abort"
-
-
-[package.metadata.leptos]
-lib-profile-release = "wasm-release"
-
 [dependencies]
 chorus = { version = "0.13.0", default-features = false, features = [
     "rt",
