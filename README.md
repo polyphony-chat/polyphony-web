@@ -2,8 +2,6 @@
 
 [![Discord]][Discord-invite]
 [![Build][build-shield]][build-url]
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
 [![Issues][issues-shield]][issues-url]
 <img src="https://img.shields.io/static/v1?label=Status&message=Early%20Development&color=blue">
 
@@ -16,7 +14,7 @@
 <h3 align="center">Polyphony Web</h3>
 
   <p align="center">
-    A multi-instance, cross-platform Discord/Spacebar API-compatible chat client, written in Rust using Yew and optionally Tauri.
+    A multi-instance, cross-platform Discord/Spacebar API-compatible chat client, written in Rust using leptos and optionally Tauri.
     <br />
     <a href="https://github.com/polyphony-chat/polyphony-web"><strong>Explore the docs »</strong></a>
     <br />
@@ -35,12 +33,12 @@
 
 Add wasm as a compilation target
 
-```
+```bash
 rustup target add wasm32-unknown-unknown
 ```
 
 Install `tauri-cli` and `trunk`
-```sh
+```bash
 cargo install tauri-cli trunk --locked
 ```
 

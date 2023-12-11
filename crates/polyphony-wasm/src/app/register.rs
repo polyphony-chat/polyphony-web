@@ -1,126 +1,83 @@
-use std::borrow::BorrowMut;
-use std::rc::Rc;
-
-use crate::stores::AuthenticationStore;
-use chorus::instance::Instance;
+use chorus::errors::ChorusResult;
+use chorus::instance::{ChorusUser, Instance};
+use chorus::types::RegisterSchema;
 use chorus::UrlBundle;
-use yew::prelude::*;
-use yew_router::scope_ext::RouterScopeExt;
-use yewdux::prelude::*;
+use hashbrown::HashMap;
+use leptos::*;
+use log::*;
 
-#[derive(Default)]
-pub(crate) struct RegisterPage {
-    state: Rc<AuthenticationStore>,
-    dispatch: Dispatch<AuthenticationStore>,
+#[component]
+pub fn Register() -> impl IntoView {
+    let (mail, set_mail) = create_signal(String::new());
+    let (pass, set_pass) = create_signal(String::new());
+    let (url, set_url) = create_signal(String::new());
 
-    url_api: Option<AttrValue>,
-    url_wss: Option<AttrValue>,
-    url_cdn: Option<AttrValue>,
-    url_base: Option<AttrValue>,
-
-    email: AttrValue,
-    password: AttrValue,
-    consent: bool,
-    of_age: bool,
-}
-
-pub(crate) enum RegisterPageMsg {
-    AttemptRegister,
-    SetError(String),
-    ToggleConsent,
-    ToggleAgeConfirm,
-    UpdateAuth(Rc<AuthenticationStore>),
-    UpdateUrlApi(AttrValue),
-    UpdateUrlCdn(AttrValue),
-    UpdateUrlWss(AttrValue),
-    UpdateUrlBase(AttrValue),
-    UpdatePassword(AttrValue),
-    UpdateEmail(AttrValue),
-}
-
-impl RegisterPage {
-    fn individual_urls_set(&self) -> bool {
-        self.url_api.is_some() && self.url_wss.is_some() && self.url_cdn.is_some()
+    let submit = create_action(|input: &(String, String, String)| {
+        let input = input.to_owned();
+        async move { register(&input).await }
+    });
+    debug!("Rendering Register component");
+    view! {
+        <form on:submit=move |ev| {
+            ev.prevent_default();
+            let input = (url.get().to_string(), pass.get().to_string(), mail.get().to_string());
+            submit.dispatch(input);
+        }>
+            <label for="mail">Email:</label>
+            <input class="border-2 border-black text-black" type="email" id="mail" name="email" on:input=move |ev| {
+                set_mail.set(event_target_value(&ev));
+            } prop:value=mail/><br/>
+            <label for="pass">Password:</label>
+            <input class="border-2 border-black text-black" type="password" id="pass" name="pass" on:input=move |ev| {
+                set_pass.set(event_target_value(&ev));
+            } prop:value=pass/><br/>
+            <label for="iurl">Instance URL:</label>
+            <input class="border-2 border-black text-black" type="text" id="iurl" name="iurl" on:input=move |ev| {
+                set_url.set(event_target_value(&ev));
+            } prop:value=url/><br/>
+            <button type="submit" id="submitbutton">Submit</button>
+        </form>
     }
 }
 
-impl Component for RegisterPage {
-    type Message = RegisterPageMsg;
-
-    type Properties = ();
-
-    fn create(ctx: &Context<Self>) -> Self {
-        let callback = ctx.link().callback(RegisterPageMsg::UpdateAuth);
-        let dispatch = Dispatch::<AuthenticationStore>::subscribe(callback);
-
-        Self {
-            state: dispatch.get(),
-            dispatch,
-            ..Default::default()
+async fn register(input: &(String, String, String)) -> ChorusResult<ChorusUser> {
+    let register_schema = RegisterSchema {
+        username: input.2.clone(),
+        password: Some(input.1.clone()),
+        consent: true,
+        email: Some(input.2.clone()),
+        date_of_birth: Some("2000-01-01".to_string()),
+        ..Default::default()
+    };
+    let instance_store = use_context::<RwSignal<HashMap<UrlBundle, Instance>>>().unwrap();
+    let urls = UrlBundle::from_root_url(&input.0).await?;
+    let mut instance = match instance_store.get_untracked().get(&urls) {
+        Some(cached_instance) => {
+            debug!("Got cached instance: {:#?}", cached_instance);
+            cached_instance.clone()
         }
-    }
-
-    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-            RegisterPageMsg::AttemptRegister => {
-                // TODO: Check consent and of_age before proceeding with registration.
-
-                let dispatch = self.dispatch.clone();
-                let set_error_callback = ctx.link().callback(RegisterPageMsg::SetError);
-                let navigator = ctx.link().navigator().unwrap();
-                let url_bundle = match self.individual_urls_set() {
-                    true => UrlBundle::new(
-                        self.url_api.as_ref().unwrap().to_string(),
-                        self.url_wss.as_ref().unwrap().to_string(),
-                        self.url_wss.as_ref().unwrap().to_string(),
-                    ),
-                    false => todo!(), // TODO: Get URLs from .well-known,
-                };
-
-                wasm_bindgen_futures::spawn_local(async move {});
-                true
-            }
-            RegisterPageMsg::SetError(_) => todo!(),
-            RegisterPageMsg::ToggleConsent => {
-                self.consent = !self.consent;
-                false
-            }
-            RegisterPageMsg::ToggleAgeConfirm => {
-                self.of_age = !self.of_age;
-                false
-            }
-            RegisterPageMsg::UpdateAuth(data) => {
-                self.state = data;
-                false
-            }
-            RegisterPageMsg::UpdateUrlApi(data) => {
-                self.url_api = Some(data);
-                false
-            }
-            RegisterPageMsg::UpdateUrlCdn(data) => {
-                self.url_cdn = Some(data);
-                false
-            }
-            RegisterPageMsg::UpdateUrlWss(data) => {
-                self.url_wss = Some(data);
-                false
-            }
-            RegisterPageMsg::UpdateUrlBase(data) => {
-                self.url_base = Some(data);
-                false
-            }
-            RegisterPageMsg::UpdatePassword(data) => {
-                self.password = data;
-                false
-            }
-            RegisterPageMsg::UpdateEmail(data) => {
-                self.email = data;
-                false
-            }
+        None => {
+            debug!("No cached instance found. Attempting lookup");
+            debug!("Attempting to create instance from URLBundle {:#?}", &urls);
+            let new_instance = Instance::new(urls.clone()).await.unwrap();
+            debug!(
+                "Got fresh instance: {:#?}; Inserting into cache",
+                &new_instance
+            );
+            instance_store.update(|map| {
+                map.insert(urls.clone(), new_instance.clone());
+            });
+            new_instance
         }
-    }
-
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        todo!()
-    }
+    };
+    debug!(
+        "Registering account on instance {}",
+        instance.instance_info.instance_name
+    );
+    let account = instance.register_account(register_schema).await;
+    instance_store.update(|map| {
+        map.insert(urls, instance);
+    });
+    debug!("Got account with token {}", account.as_ref().unwrap().token);
+    account
 }

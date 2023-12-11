@@ -1,19 +1,12 @@
 use chorus::instance::{ChorusUser, Instance};
 use chorus::UrlBundle;
 use hashbrown::HashMap;
-use serde::{Deserialize, Serialize};
-use yewdux::prelude::*;
+use leptos::RwSignal;
 
 use crate::GlobalIdentifier;
 
-#[derive(Store, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-pub(crate) struct AuthenticationStore {
-    pub(crate) instances: HashMap<UrlBundle, Instance>,
-    /// Tuple (GlobalIdentifier, Token)
-    pub(crate) identities: Vec<(GlobalIdentifier, String)>,
-}
-
-#[derive(Store, Default, PartialEq)]
-pub(crate) struct UserStore {
-    users: Vec<(GlobalIdentifier, ChorusUser)>,
+#[derive(Clone, Debug, Default)]
+pub(crate) struct ChorusStore {
+    pub(crate) instances: RwSignal<HashMap<UrlBundle, Instance>>,
+    pub(crate) users: RwSignal<HashMap<GlobalIdentifier, ChorusUser>>,
 }
