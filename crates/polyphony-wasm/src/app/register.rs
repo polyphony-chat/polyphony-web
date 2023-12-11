@@ -1,10 +1,12 @@
 use chorus::errors::ChorusResult;
 use chorus::instance::Instance;
 use chorus::types::RegisterSchema;
+use chorus::UrlBundle;
+use hashbrown::HashMap;
 use leptos::*;
 use log::*;
 
-use crate::stores::AuthenticationStore;
+use crate::stores::InstanceStore;
 
 #[component]
 pub fn Register() -> impl IntoView {
@@ -12,18 +14,9 @@ pub fn Register() -> impl IntoView {
     let (pass, set_pass) = create_signal(String::new());
     let (url, set_url) = create_signal(String::new());
 
-    let instance_state = expect_context::<RwSignal<AuthenticationStore>>();
-    let (instance, set_instance) = create_slice(
-        instance_state,
-        |state: &AuthenticationStore| state.instances.clone(), //TODO Is this ok?
-        |state, (k, v)| {
-            state.instances.insert(k, v);
-        },
-    );
-
     let submit = create_action(|input: &(String, String, String)| {
         let input = input.to_owned();
-        async move { send_register(&input).await }
+        async move { register(&input).await }
     });
     debug!("Rendering Register component");
     view! {
@@ -49,7 +42,7 @@ pub fn Register() -> impl IntoView {
     }
 }
 
-async fn send_register(input: &(String, String, String)) -> ChorusResult<Instance> {
+async fn register(input: &(String, String, String)) -> ChorusResult<Instance> {
     let reg = RegisterSchema {
         username: input.2.clone(),
         password: Some(input.1.clone()),
@@ -57,7 +50,22 @@ async fn send_register(input: &(String, String, String)) -> ChorusResult<Instanc
         email: Some(input.2.clone()),
         ..Default::default()
     };
-    let instance = Instance::from_root_url(&input.0).await;
-    trace!("Got instance: {:?}", instance.clone().unwrap());
-    instance
+    let instance_store = use_context::<RwSignal<HashMap<UrlBundle, Instance>>>().unwrap();
+    let urls = UrlBundle::from_root_url(&input.0).await?;
+    if let Some(instance) = instance_store.get_untracked().get(&urls) {
+        debug!("Got cached instance: {:#?}", instance);
+        Ok(instance.clone())
+    } else {
+        debug!("No cached instance found. Attempting lookup");
+        debug!("Attempting to create instance from URLBundle {:#?}", &urls);
+        let new_instance = Instance::new(urls.clone()).await.unwrap();
+        debug!(
+            "Got fresh instance: {:#?}; Inserting into cache",
+            &new_instance
+        );
+        instance_store.update(|map| {
+            map.insert(urls, new_instance.clone());
+        });
+        Ok(new_instance)
+    }
 }
