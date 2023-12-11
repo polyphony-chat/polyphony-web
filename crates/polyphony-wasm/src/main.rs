@@ -4,6 +4,7 @@ mod stores;
 use chorus::types::Snowflake;
 use chorus::UrlBundle;
 use leptos::*;
+use leptos_router::*;
 use log::*;
 
 use crate::app::Register;
@@ -15,7 +16,16 @@ fn App() -> impl IntoView {
     provide_context(instance_store.instances);
     debug!("Rendering the App view");
     view! {
-        <Register/>
+        <Router>
+            <main>
+                <Routes>
+                    <Route path="/register" view=Register/>
+                    <Route path="/u" view=|| view! { "hi" }>
+                        <Route path=":id" view=|| view! {"meow"}/>
+                    </Route>
+                </Routes>
+            </main>
+        </Router>
     }
 }
 
