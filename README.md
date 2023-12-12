@@ -1,3 +1,5 @@
+# moved to [polyphony-chat/polyphony](https://github.com/polyphony-chat/polyphony)
+
 <div align="center">
 
 [![Discord]][Discord-invite]
